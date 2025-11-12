@@ -31,7 +31,7 @@ model = PPO.load(os.path.join(models_dir, "best_model/best_model"))
 
 
 #----------Evaluation----------#
-NUM_EPISODES = 20
+NUM_EPISODES = 10
 all_rewards = []
 all_lengths = []
 

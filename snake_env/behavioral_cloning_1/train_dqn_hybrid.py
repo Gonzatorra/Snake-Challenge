@@ -39,7 +39,7 @@ class MLPExtractorNormalized(BaseFeaturesExtractor):
         input_dim = observation_space.shape[0]
         self.mlp = nn.Sequential(
             nn.Linear(input_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),  # Normalization for stability
+            nn.LayerNorm(hidden_dim),  #Normalization for stability
             nn.ReLU(),
             nn.Linear(hidden_dim, features_dim),
             nn.LayerNorm(features_dim),
@@ -54,7 +54,16 @@ def make_env():
     return Monitor(SnakeEnv())
 
 env = DummyVecEnv([make_env])
-env = VecNormalize(env, norm_obs=False, norm_reward=True, clip_reward=10.0)  # Normalize rewards
+env = VecNormalize(env, norm_obs=False, norm_reward=True, clip_reward=10.0)
+
+#------------Set up evaluation environment------------#
+def make_eval_env():
+    return Monitor(SnakeEnv())
+
+eval_env = DummyVecEnv([make_eval_env])
+eval_env = VecNormalize(eval_env, norm_obs=False, norm_reward=True, clip_reward=10.0)
+
+
 
 #-----Set up the policy-----#
 policy_kwargs = dict(
@@ -86,7 +95,7 @@ save_path = os.path.join(os.path.dirname(__file__), "..", "models", "best_model"
 os.makedirs(save_path, exist_ok=True)
 
 eval_callback = EvalCallback(
-    env,
+    eval_env,
     best_model_save_path=save_path,
     log_path="logs/ppo_snake_eval",
     eval_freq=5000,      # Eval every 5000 steps
